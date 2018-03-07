@@ -1,0 +1,92 @@
+stepfor<-function (y = y, d = d, alfa = 0.05)
+{
+    pval <- NULL
+    design <- NULL
+    j = 1
+    resul0 <- summary(lm(y ~ ., data = d))$coefficients[, 4]
+    d <- as.data.frame(d[, names(resul0)[-1]])
+    for (i in 1:ncol(d)) {
+        sub <- cbind(design, d[, i])
+        sub <- as.data.frame(sub)
+        lm2 <- lm(y ~ ., data = sub)
+        result <- summary(lm2)
+        pval[i] <- result$coefficients[, 4][j + 1]
+    }
+    min <- min(pval)
+    while (min < alfa) {
+        b <- pval == min
+        c <- c(1:length(pval))
+        pos <- c[b]
+        pos <- pos[!is.na(pos)][1]
+        design <- cbind(design, d[, pos])
+        design <- as.data.frame(design)
+        colnames(design)[j] <- colnames(d)[pos]
+        j = j + 1
+        d <- as.data.frame(d[, -pos])
+        pval <- NULL
+        if (ncol(d) != 0) {
+            for (i in 1:ncol(d)) {
+                sub <- cbind(design, d[, i])
+                sub <- as.data.frame(sub)
+                lm2 <- lm(y ~ ., data = sub)
+                result <- summary(lm2)
+                pval[i] <- result$coefficients[, 4][j + 1]
+            }
+            min <- min(pval, na.rm = TRUE)
+        }
+        else min <- 1
+    }
+    if (is.null(design)) {
+        lm1 <- lm(y ~ 1)
+    }
+    else {
+        lm1 <- lm(y ~ ., data = design)
+    }
+    return(lm1)
+}
+
+stepback<-
+function (y = y, d = d, alfa = 0.05)
+{
+    lm1 <- lm(y ~ ., data = d)
+    result <- summary(lm1)
+    max <- max(result$coefficients[, 4][-1], na.rm = TRUE)
+    while (max > alfa) {
+        varout <- names(result$coefficients[, 4])[result$coefficients[,
+            4] == max]
+        pos <- position(matrix = d, vari = varout)
+        d <- d[, -pos]
+        if (length(result$coefficients[, 4][-1]) == 2) {
+            min <- min(result$coefficients[, 4][-1], na.rm = TRUE)
+            lastname <- names(result$coefficients[, 4])[result$coefficients[,
+                4] == min]
+        }
+        if (is.null(dim(d))) {
+            d <- as.data.frame(d)
+            colnames(d) <- lastname
+        }
+        lm1 <- lm(y ~ ., data = d)
+        result <- summary(lm1)
+        max <- max(result$coefficients[, 4][-1], na.rm = TRUE)
+        if (length(result$coefficients[, 4][-1]) == 1) {
+            max <- result$coefficients[, 4][-1]
+            if (max > alfa) {
+                max = 0
+                lm1 <- lm(y ~ 1)
+            }
+        }
+    }
+    return(lm1)
+}
+
+position<-
+function (matrix, vari)
+{
+    a <- colnames(matrix)
+    b <- a == vari
+    c <- c(1:length(a))
+    d <- c[b]
+    return(d)
+}
+
+
