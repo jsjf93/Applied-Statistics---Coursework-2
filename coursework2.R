@@ -134,6 +134,7 @@ summary(tforward)
 summary(tbackward)
 # Both are identical
 tbest <- tforward
+summary(tbest)
 
 yhat<-fitted(tbest)
 r<-residuals(tbest)
@@ -184,6 +185,29 @@ interaction_model<-lm(sqrt(SLENGTH) ~ AGE + RISK + BEDS + AFF + AVDAILY + NURSES
                       subset=h<0.09333333)
 summary(interaction_model)
 anova(interaction_model)
+
+
+yhat<-fitted(interaction_model)
+r<-residuals(interaction_model)
+rstud<-rstandard(interaction_model)
+rjack<-rstudent(interaction_model)
+h<-hatvalues(interaction_model)
+d<-cooks.distance(interaction_model)
+
+par(mfrow=c(1,2))
+qqnorm(rjack)
+qqline(rjack)
+hist(rjack,xlab="Jackknife residuals",main="Jackknife residuals")
+
+graphics.off()
+
+# checking for constant error variance
+plot(yhat,rjack,xlab="Predicted values",ylab="Jackknife residuals",main="Constance error variance")
+abline(h=0)
+abline(h=2,lty=2)
+abline(h=-2,lty=2)
+
+shapiro.test(rjack)
 
 # 6. Adding the above interaction term, which are the predicted regression models for
 #    (a) University Affiliation         slength = (11.081 - 4.930) + (-0.075 + 0.126) age
