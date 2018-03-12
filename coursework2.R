@@ -151,7 +151,8 @@ hist(rjack,xlab="Jackknife residuals",main="Jackknife residuals")
 graphics.off()
 
 # checking for constant error variance
-plot(yhat,rjack,xlab="Predicted values",ylab="Jackknife residuals",main="Constance error variance")
+plot(yhat,rjack,xlab="Predicted values",ylab="Jackknife residuals",
+     main="Constance error variance")
 abline(h=0)
 abline(h=2,lty=2)
 abline(h=-2,lty=2)
@@ -174,15 +175,16 @@ h[h > 0.09333333]
 max(d)
 # value not greater than one
 
-tbest2<-lm(sqrt(SLENGTH) ~ AGE + RISK + BEDS + AFF + AVDAILY + NURSES, subset=h<0.09333333)
+tbest2<-lm(sqrt(SLENGTH) ~ AGE + RISK + BEDS + AFF + AVDAILY + NURSES, 
+           subset=h<0.09333333)
 summary(tbest)
 summary(tbest2)
 
 # 5. In this model decide whether the addition of the interaction term between age and aff
 #    contributes substantially to the prediction of the length of stay. Use all the taught 
 #    tests and methods.
-interaction_model<-lm(sqrt(SLENGTH) ~ AGE + RISK + BEDS + AFF + AVDAILY + NURSES + AGE * AFF, 
-                      subset=h<0.09333333)
+interaction_model<-lm(sqrt(SLENGTH) ~ AGE + RISK + BEDS + AFF + AVDAILY + NURSES + 
+                        AGE * AFF, subset=h<0.09333333)
 summary(interaction_model)
 anova(interaction_model)
 
@@ -202,7 +204,8 @@ hist(rjack,xlab="Jackknife residuals",main="Jackknife residuals")
 graphics.off()
 
 # checking for constant error variance
-plot(yhat,rjack,xlab="Predicted values",ylab="Jackknife residuals",main="Constance error variance")
+plot(yhat,rjack,xlab="Predicted values",ylab="Jackknife residuals",
+     main="Constance error variance")
 abline(h=0)
 abline(h=2,lty=2)
 abline(h=-2,lty=2)
@@ -217,13 +220,13 @@ shapiro.test(rjack)
 # 7. Interpret the regression coefficients in the best regression model with the 
 #    interaction term. 
 
-# For hospitals without University Affiliation, increasing the age of a patient by a year decreases the
-# length of stay on average 0.075.
-# For hospitals with University Affiliation, increasing the age of a patient by a year increases
-# the length of stay on average (-0.075 + 0.126 = 0.051).
+# For hospitals without University Affiliation, increasing the age of a patient by a 
+# year decreases the length of stay on average 0.075.
+# For hospitals with University Affiliation, increasing the age of a patient by a year 
+# increases the length of stay on average (-0.075 + 0.126 = 0.051).
 
 
 # 8. Interpret the multiple R^2 in the best regression model with the interaction term.
 
-# R^2 = 0.7913. This means that approximately 79% of the variability in the length of stay was explained
-# by this regression model
+# R^2 = 0.7913. This means that approximately 79% of the variability in the length of stay 
+# was explained by this regression model
